@@ -17,7 +17,7 @@ public class SwiftMarketingCloudMessagingFlutterPlugin:
   private var channel: FlutterMethodChannel?
   private var resumingFromBackground: Bool = false
   private var launchNotification: [AnyHashable : Any]? = nil
-   
+  
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "marketing_cloud_messaging_flutter", binaryMessenger: registrar.messenger())
     let instance = SwiftMarketingCloudMessagingFlutterPlugin()
@@ -28,17 +28,17 @@ public class SwiftMarketingCloudMessagingFlutterPlugin:
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch(call.method){
-    case "initialize":
-      if let args = call.arguments as? Dictionary<String, Any>,
-        let appID = args["appID"] as? String,
-        let accessToken = args["accessToken"] as? String,
-        let appEndpoint = args["appEndpoint"] as? String,
-        let mid = args["mid"] as? String
-      {
-        result(self.configureMarketingCloudSDK(appID: appID,accessToken: accessToken,appEndpoint: appEndpoint,mid: mid))
-      } else {
-        result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
-      }
+      case "initialize":
+        if let args = call.arguments as? Dictionary<String, Any>,
+          let appID = args["appID"] as? String,
+          let accessToken = args["accessToken"] as? String,
+          let appEndpoint = args["appEndpoint"] as? String,
+          let mid = args["mid"] as? String
+        {
+          result(self.configureMarketingCloudSDK(appID: appID,accessToken: accessToken,appEndpoint: appEndpoint,mid: mid))
+        } else {
+          result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
+        }
       case "setMessagingToken": result(true)
       case "getMessagingToken": result(MarketingCloudSDK.sharedInstance().sfmc_deviceToken())
       case "setAttribute":
@@ -71,9 +71,14 @@ public class SwiftMarketingCloudMessagingFlutterPlugin:
           result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
         }
       case "sdkState":
-          print("SDK State = \(MarketingCloudSDK.sharedInstance().sfmc_getSDKState() ?? "SDK State is nil")")
-      case "trackCart": MarketingCloudSDK.sharedInstance().sfmc_trackCartContents(call.arguments as! [AnyHashable : Any])
-      case "trackConversion": MarketingCloudSDK.sharedInstance().sfmc_trackCartConversion(call.arguments as! [AnyHashable : Any])
+        print("SDK State = \(MarketingCloudSDK.sharedInstance().sfmc_getSDKState() ?? "SDK State is nil")")
+        break;
+      case "trackCart":
+        MarketingCloudSDK.sharedInstance().sfmc_trackCartContents(call.arguments as! [AnyHashable : Any])
+        break;
+      case "trackConversion":
+        MarketingCloudSDK.sharedInstance().sfmc_trackCartConversion(call.arguments as! [AnyHashable : Any])
+        break;
       case "trackPageView":
         if let args = call.arguments as? Dictionary<String, Any>,
          let url = args["url"] as? String,
@@ -84,7 +89,10 @@ public class SwiftMarketingCloudMessagingFlutterPlugin:
          } else {
            result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
          }
-    default: result(FlutterMethodNotImplemented)
+        break;
+      case "logEvent":
+        print("SDK State = \(MarketingCloudSDK.sharedInstance().sfmc_getSDKState() ?? "SDK State is nil")")
+      default: result(FlutterMethodNotImplemented)
     }
   }
     
@@ -95,6 +103,18 @@ public class SwiftMarketingCloudMessagingFlutterPlugin:
     appEndpoint: String,
     mid: String
   ) -> Bool {
+
+    let configuration = PushConfigBuilder(appId: appID)
+         .setAccessToken(accessToken)
+         .setMarketingCloudServerUrl(appEndpoint)
+         .build()
+
+    SFMCSdk.initializeSdk(ConfigBuilder().setPush(config: configuration).build())
+    
+    
+    // #####################
+    
+    
     let builder = MarketingCloudSDKConfigBuilder()
         .sfmc_setApplicationId(appID)
         .sfmc_setAccessToken(accessToken)

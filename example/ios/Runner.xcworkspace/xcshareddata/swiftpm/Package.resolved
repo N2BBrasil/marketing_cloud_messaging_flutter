@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "MarketingCloudSDK",
+        "repositoryURL": "https://github.com/salesforce-marketingcloud/MarketingCloudSDK-iOS",
+        "state": {
+          "branch": null,
+          "revision": "8ce9a9751bec18d3deb942c28a1b05163d88fe5f",
+          "version": "8.0.3"
+        }
+      },
+      {
+        "package": "SFMCSDK",
+        "repositoryURL": "https://github.com/salesforce-marketingcloud/sfmc-sdk-ios",
+        "state": {
+          "branch": null,
+          "revision": "574ea4005b6440809d31b41d166cf29e263d42cf",
+          "version": "1.0.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

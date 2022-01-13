@@ -199,4 +199,14 @@ class MarketingCloudMessaging {
         throw UnsupportedError("Unrecognized JSON message");
     }
   }
+
+  void logEvent(String name, Map<String, dynamic> parameters) {
+    _channel.invokeMethod<void>(
+      'logEvent',
+      {
+        'name': name,
+        'parameters': parameters,
+      },
+    );
+  }
 }

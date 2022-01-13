@@ -13,13 +13,14 @@ import com.salesforce.marketingcloud.MarketingCloudSdk
 import com.salesforce.marketingcloud.analytics.PiCart
 import com.salesforce.marketingcloud.analytics.PiCartItem
 import com.salesforce.marketingcloud.analytics.PiOrder
-import com.salesforce.marketingcloud.messages.iam.InAppMessage
-import com.salesforce.marketingcloud.messages.iam.InAppMessageManager
+import com.salesforce.marketingcloud.events.EventManager
 import com.salesforce.marketingcloud.messages.push.PushMessageManager
 import com.salesforce.marketingcloud.notifications.NotificationCustomizationOptions
 import com.salesforce.marketingcloud.sfmcsdk.BuildConfig
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdk
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdkModuleConfig
+import com.salesforce.marketingcloud.sfmcsdk.components.events.EventManager.Companion
+import com.salesforce.marketingcloud.sfmcsdk.components.events.EventManager.Companion.customEvent
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -114,6 +115,13 @@ class MarketingCloudMessagingFlutterPlugin: FlutterPlugin, MethodCallHandler {
             call.argument<String>("item"),
             call.argument<String>("searchTerms"),
           )
+        }
+        "logEvent" -> {
+          val name = call.argument<String>("name")!!
+          val params = call.argument<Map<String, Any>>("parameters")!!
+          val event = customEvent(name, params)
+
+          SFMCSdk.track(event)
         }
         else -> {
           result.notImplemented()

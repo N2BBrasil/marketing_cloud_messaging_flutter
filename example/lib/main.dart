@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marketing_cloud_messaging_flutter/marketing_cloud_messaging_flutter.dart';
 
+import 'firebase_options.dart';
+
 Future<dynamic> _onBackgroundMessage(Map<String, dynamic> message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -33,12 +35,16 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      await Firebase.initializeApp();
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       mktCloud.initialize(
-        appID: "",
-        accessToken: "",
-        marketingCloudServerUrl: "",
-        mid: "",
+        appID: "df86f5e7-8429-4440-aec6-433528ff4cd5",
+        accessToken: "anUXpGCK7XS1c7stu3MDgFtj",
+        marketingCloudServerUrl:
+            "https://mcztx763gcky9vn2thhbc1h1p16m.device.marketingcloudapis.com/",
+        mid: "514004931",
         senderId: Firebase.apps.first.options.messagingSenderId,
         onMessage: (Map<String, dynamic> message) async {
           print("onMessage: $message");
@@ -86,7 +92,12 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: ElevatedButton(
             onPressed: () async {
-              mktCloud.logSdkState();
+              mktCloud.logEvent(
+                'begin_teste',
+                <String, dynamic>{
+                  'teste': 'teste',
+                },
+              );
             },
             child: Text('Running on: $_platformVersion\n'),
           ),
